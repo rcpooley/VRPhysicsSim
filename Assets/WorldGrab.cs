@@ -32,12 +32,15 @@ public class WorldGrab : MonoBehaviour {
 
             Vector3 systemPos = system.position;
             float newScale = system.localScale.x * transform.localScale.x;
+            Vector3 offsetRot = transform.eulerAngles;
 
             transform.position = Vector3.zero;
             transform.localScale = Vector3.one;
+            transform.eulerAngles = Vector3.zero;
 
             system.position = systemPos;
             system.localScale = new Vector3(newScale, newScale, newScale);
+            system.eulerAngles += offsetRot;
         }
 
         bool left = OVRInput.Get(OVRInput.Button.PrimaryHandTrigger, OVRInput.Controller.LTouch);
@@ -48,13 +51,28 @@ public class WorldGrab : MonoBehaviour {
         } else if (!left && right) {
             transform.position = rightPos - rightGrabPos;
         } else if (left && right) {
+            // Set scale
             float grabDist = Vector3.Distance(leftGrabPos, rightGrabPos);
             float dist = Vector3.Distance(leftPos, rightPos);
             float scale = dist / grabDist;
             transform.localScale = new Vector3(scale, scale, scale);
 
+            // Set rotation
+            float grabAngle = GetAngle(leftGrabPos, rightGrabPos);
+            float angle = GetAngle(leftPos, rightPos);
+            float diff = (grabAngle - angle);
+            transform.eulerAngles = new Vector3(0, diff, 0);
+
+            // Set position
             Vector3 handGrabMidpoint = (leftGrabPos + rightGrabPos) / 2;
-            transform.position = handMidpoint - handGrabMidpoint * scale;
+            Vector3 scaled = handGrabMidpoint * scale;
+            Vector3 pivot = new Vector3(0, scaled.y, 0);
+            Vector3 rotated = Quaternion.Euler(transform.eulerAngles) * (scaled - pivot) + pivot;
+            transform.position = handMidpoint - rotated;
         }
+    }
+
+    private float GetAngle(Vector3 p1, Vector3 p2) {
+        return Mathf.Atan2(p2.z - p1.z, p2.x - p1.x) * Mathf.Rad2Deg;
     }
 }
