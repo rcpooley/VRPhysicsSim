@@ -12,10 +12,10 @@ GameObject:
   - component: {fileID: 5897867073592549057}
   - component: {fileID: 1403707966696552489}
   - component: {fileID: 8746101697520709148}
-  - component: {fileID: 2563189440424593884}
   - component: {fileID: 8525408638620991279}
+  - component: {fileID: 8269611396415170816}
   m_Layer: 0
-  m_Name: MyPart
+  m_Name: Part
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -95,20 +95,6 @@ BoxCollider:
   serializedVersion: 2
   m_Size: {x: 1, y: 1, z: 1}
   m_Center: {x: 0, y: 0, z: 0}
---- !u!114 &2563189440424593884
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 7020162540953498379}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: ac8ace3bf32339d4aa3d484bf638949f, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  jointToggleCollider: {fileID: 7698789514256241812, guid: c9ddb8b577ceb5042a27c1e6a009bd0a,
-    type: 3}
 --- !u!114 &8525408638620991279
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -127,5 +113,17 @@ MonoBehaviour:
   xs: 1
   ys: 1
   zs: 1
+  noScale: 0
   runtimeCalculate: 1
-  debugSnap: 0
+--- !u!114 &8269611396415170816
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 7020162540953498379}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: ba9d5dab0afe25a4bb3296e1e70ca4ba, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 

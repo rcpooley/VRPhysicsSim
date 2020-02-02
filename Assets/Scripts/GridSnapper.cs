@@ -42,18 +42,15 @@ public class GridSnapper : MonoBehaviour {
 
     public void GridSnap(int x, int y, int z) {
         Vector3 scale = new Vector3(xs * unitSize, ys * unitSize, zs * unitSize);
-        if (noScale) {
-            scale = Vector3.one;
-        }
         this.x = x;
         this.y = y;
         this.z = z;
-        transform.localPosition = new Vector3(
-            x * unitSize + scale.x / 2,
-            y * unitSize + scale.y / 2,
-            z * unitSize + scale.z / 2
-        );
-        transform.localScale = scale;
+        Vector3 newPos = new Vector3(x, y, z) * unitSize;
+        if (!noScale) {
+            transform.localScale = scale;
+            newPos += scale / 2;
+        }
+        transform.localPosition = newPos;
 
         if (jointToggler) {
             jointToggler.OnGridSnap(this);
