@@ -10,10 +10,20 @@ public class GridSnapper : MonoBehaviour {
 
     public int xs = 1, ys = 1, zs = 1;
 
+    public bool runtimeCalculate;
+
     public bool debugSnap;
 
     // Start is called before the first frame update
     void Start() {
+        if (runtimeCalculate) {
+            Vector3 scale = new Vector3(xs * unitSize, ys * unitSize, zs * unitSize);
+            transform.localPosition = new Vector3(
+                x * unitSize + scale.x / 2,
+                y * unitSize + scale.y / 2,
+                z * unitSize + scale.z / 2
+            );
+        }
         GridSnap();
     }
 
@@ -27,7 +37,7 @@ public class GridSnapper : MonoBehaviour {
 
     void GridSnap() {
         Vector3 scale = new Vector3(xs * unitSize, ys * unitSize, zs * unitSize);
-        Vector3 corner = transform.position - scale / 2;
+        Vector3 corner = transform.localPosition - scale / 2;
         Vector3 rawPos = corner / unitSize;
         x = (int) Mathf.Round(rawPos.x);
         y = (int) Mathf.Round(rawPos.y);
