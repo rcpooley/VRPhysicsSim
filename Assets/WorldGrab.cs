@@ -4,10 +4,7 @@ using UnityEngine;
 
 public class WorldGrab : MonoBehaviour {
 
-    private Transform systemOffset;
-
-    private Vector3 systemGrabPos;
-    private float systemGrabScale;
+    private Transform system;
 
     private Vector3 leftGrabPos;
 
@@ -15,15 +12,14 @@ public class WorldGrab : MonoBehaviour {
 
     // Start is called before the first frame update
     void Start() {
-        systemOffset = transform.GetChild(0);
+        system = transform.GetChild(0);
     }
 
     // Update is called once per frame
     void Update() {
         Vector3 leftPos = OVRInput.GetLocalControllerPosition(OVRInput.Controller.LTouch);
         Vector3 rightPos = OVRInput.GetLocalControllerPosition(OVRInput.Controller.RTouch);
-        Vector3 systemPos = transform.position;
-        float systemScale = transform.localScale.x;
+        Vector3 handMidpoint = (leftPos + rightPos) / 2;
 
         bool leftDown = OVRInput.GetDown(OVRInput.Button.PrimaryHandTrigger, OVRInput.Controller.LTouch);
         bool leftUp = OVRInput.GetUp(OVRInput.Button.PrimaryHandTrigger, OVRInput.Controller.LTouch);
@@ -33,29 +29,32 @@ public class WorldGrab : MonoBehaviour {
         if (leftDown || rightDown || leftUp || rightUp) {
             leftGrabPos = leftPos;
             rightGrabPos = rightPos;
-            systemGrabPos = systemPos;
-            systemGrabScale = systemScale;
+
+            Vector3 systemPos = system.position;
+            float newScale = system.localScale.x * transform.localScale.x;
+
+            transform.position = Vector3.zero;
+            transform.localScale = Vector3.one;
+
+            system.position = systemPos;
+            system.localScale = new Vector3(newScale, newScale, newScale);
         }
 
         bool left = OVRInput.Get(OVRInput.Button.PrimaryHandTrigger, OVRInput.Controller.LTouch);
         bool right = OVRInput.Get(OVRInput.Button.PrimaryHandTrigger, OVRInput.Controller.RTouch);
 
         if (left && !right) {
-            Vector3 offset = leftPos - leftGrabPos;
-            transform.position = systemGrabPos + offset;
+            transform.position = leftPos - leftGrabPos;
         } else if (!left && right) {
-            Vector3 offset = rightPos - rightGrabPos;
-            transform.position = systemGrabPos + offset;
+            transform.position = rightPos - rightGrabPos;
         } else if (left && right) {
             float grabDist = Vector3.Distance(leftGrabPos, rightGrabPos);
             float dist = Vector3.Distance(leftPos, rightPos);
             float scale = dist / grabDist;
-            float newScale = systemGrabScale * scale;
-            transform.localScale = new Vector3(newScale, newScale, newScale);
+            transform.localScale = new Vector3(scale, scale, scale);
 
-            Vector3 handMidpoint = (leftPos + rightPos) / 2;
-            Vector3 offset = systemGrabPos - handMidpoint;
-            transform.position = handMidpoint + offset * newScale;
+            Vector3 handGrabMidpoint = (leftGrabPos + rightGrabPos) / 2;
+            transform.position = handMidpoint - handGrabMidpoint * scale;
         }
     }
 }
