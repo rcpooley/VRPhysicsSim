@@ -48,9 +48,9 @@ public class WorldGrab : MonoBehaviour {
         }
 
         bool left = OVRInput.Get(OVRInput.Button.PrimaryHandTrigger, OVRInput.Controller.LTouch);
-        if (leftHand.isGrabbing()) left = false;
+        if (leftHand && leftHand.isGrabbing()) left = false;
         bool right = OVRInput.Get(OVRInput.Button.PrimaryHandTrigger, OVRInput.Controller.RTouch);
-        if (rightHand.isGrabbing()) right = false;
+        if (rightHand && rightHand.isGrabbing()) right = false;
 
         if (left && !right) {
             transform.position = leftPos - leftGrabPos;
@@ -80,5 +80,9 @@ public class WorldGrab : MonoBehaviour {
 
     private float GetAngle(Vector3 p1, Vector3 p2) {
         return Mathf.Atan2(p2.z - p1.z, p2.x - p1.x) * Mathf.Rad2Deg;
+    }
+
+    public Transform getSystem() {
+        return system;
     }
 }
