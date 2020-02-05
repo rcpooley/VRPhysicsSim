@@ -76,6 +76,8 @@ public class WorldGrab : MonoBehaviour {
             Vector3 rotated = Quaternion.Euler(transform.eulerAngles) * (scaled - pivot) + pivot;
             transform.position = handMidpoint - rotated;
         }
+
+        DebugPanel.U("World Scale", transform.localScale.x * system.localScale.x);
     }
 
     private float GetAngle(Vector3 p1, Vector3 p2) {
