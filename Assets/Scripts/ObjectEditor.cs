@@ -3,51 +3,42 @@ using System.Collections.Generic;
 using UnityEngine;
 
 public class ObjectEditor : MonoBehaviour {
-    bool editing;
 
-    public GameObject floor;
-    Material normalFloor;
-    public Material editingFloor;
+    private MeshRenderer floorMeshRenderer;
 
-    public GameObject resizeCube;
-    GameObject cubeInstance;
-    public Transform centerEyeAnchor;
+    private Material normalFloor;
 
-    void Start () {
-        editing = false;
-        normalFloor = floor.GetComponent<MeshRenderer> ().material;
+    private bool editing;
 
+    void Start() {
+        floorMeshRenderer = Ref.floor.GetComponent<MeshRenderer>();
+        normalFloor = floorMeshRenderer.material;
     }
 
-    void Update () {
-        if (OVRInput.GetDown (OVRInput.Button.One)) {
-            toggleEditing ();
+    void Update() {
+        if (OVRInput.GetDown(OVRInput.Button.One)) {
+            toggleEditing();
         }
 
         if (editing) {
-            if (OVRInput.GetDown (OVRInput.Button.Two)) {
-                spawnCube ();
+            if (OVRInput.GetDown(OVRInput.Button.Two)) {
+                spawnCube();
             }
         }
     }
 
-    void toggleEditing () {
+    void toggleEditing() {
         if (!editing) {
             editing = true;
-            floor.GetComponent<MeshRenderer> ().material = editingFloor;
+            floorMeshRenderer.material = Ref.editingFloorMaterial;
         } else {
             editing = false;
-            floor.GetComponent<MeshRenderer> ().material = normalFloor;
+            floorMeshRenderer.material = normalFloor;
         }
     }
 
-    void spawnCube () {
-        Vector3 spawnCubePosition = centerEyeAnchor.position + centerEyeAnchor.forward * 0.5f;
-        if (!cubeInstance) {
-            cubeInstance = Instantiate (resizeCube, spawnCubePosition, Quaternion.Euler (0, 0, 0));
-        } else {
-            cubeInstance.transform.position = spawnCubePosition;
-            cubeInstance.transform.rotation = Quaternion.Euler (0, 0, 0);
-        }
+    void spawnCube() {
+        Vector3 spawnCubePosition = Ref.centerEyeAnchor.position + Ref.centerEyeAnchor.forward * 0.5f;
+        Transform t = Instantiate(Ref.part, spawnCubePosition, Quaternion.identity).transform;
     }
 }

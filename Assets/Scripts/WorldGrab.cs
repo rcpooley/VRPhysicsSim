@@ -10,10 +10,6 @@ public class WorldGrab : MonoBehaviour {
 
     private Vector3 rightGrabPos;
 
-    public AGrabber leftHand;
-
-    public AGrabber rightHand;
-
     // Start is called before the first frame update
     void Start() {
         system = transform.GetChild(0);
@@ -48,9 +44,9 @@ public class WorldGrab : MonoBehaviour {
         }
 
         bool left = OVRInput.Get(OVRInput.Button.PrimaryHandTrigger, OVRInput.Controller.LTouch);
-        if (leftHand && leftHand.isGrabbing()) left = false;
+        if (Ref.leftHand && Ref.leftHand.isGrabbing()) left = false;
         bool right = OVRInput.Get(OVRInput.Button.PrimaryHandTrigger, OVRInput.Controller.RTouch);
-        if (rightHand && rightHand.isGrabbing()) right = false;
+        if (Ref.rightHand && Ref.rightHand.isGrabbing()) right = false;
 
         if (left && !right) {
             transform.position = leftPos - leftGrabPos;
