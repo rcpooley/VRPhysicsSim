@@ -15,6 +15,7 @@ permissions and limitations under the License.
 ************************************************************************************/
 
 using System;
+using System.Collections.Generic;
 using UnityEngine;
 
 /// <summary>
@@ -30,7 +31,7 @@ public class AGrabbable : MonoBehaviour {
     [SerializeField]
     protected Transform m_snapOffset;
     [SerializeField]
-    protected Collider[] m_grabPoints = null;
+    protected Collider[] m_grabPoints = { };
 
     protected bool m_grabbedKinematic = false;
     protected Collider m_grabbedCollider = null;

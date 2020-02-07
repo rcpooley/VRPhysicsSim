@@ -41,4 +41,9 @@ public class Ref : MonoBehaviour {
     public static AGrabber rightHand {
         get { return getInstance()._rightHand; }
     }
+
+    public Transform _objects;
+    public static Transform objects {
+        get { return getInstance()._objects; }
+    }
 }

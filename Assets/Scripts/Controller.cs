@@ -2,6 +2,6 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-public class SwampObject : MonoBehaviour {
+public class Controller : MonoBehaviour {
 
 }
