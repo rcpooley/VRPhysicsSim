@@ -12,6 +12,14 @@ public class Ref : MonoBehaviour {
         return instance;
     }
 
+    public static List<SwampObject> swampObjects {
+        get {
+            List<SwampObject> l = new List<SwampObject>();
+            Util.Children(objects).ForEach(s => l.Add(s.GetComponent<SwampObject>()));
+            return l;
+        }
+    }
+
     public GameObject _floor;
     public static GameObject floor {
         get { return getInstance()._floor; }
@@ -45,5 +53,10 @@ public class Ref : MonoBehaviour {
     public Transform _objects;
     public static Transform objects {
         get { return getInstance()._objects; }
+    }
+
+    public Material _disabledObjectMaterial;
+    public static Material disabledObjectMaterial {
+        get { return getInstance()._disabledObjectMaterial; }
     }
 }

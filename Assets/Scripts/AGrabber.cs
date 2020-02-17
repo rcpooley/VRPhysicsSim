@@ -75,7 +75,7 @@ public class AGrabber : MonoBehaviour {
     protected Dictionary<AGrabbable, int> m_grabCandidates = new Dictionary<AGrabbable, int>();
     protected bool m_operatingWithoutOVRCameraRig = true;
 
-    private bool isGrabbingSwampObject;
+    private AGrabbable closestGrabbable;
 
     /// <summary>
     /// The currently grabbed object.
@@ -127,6 +127,7 @@ public class AGrabber : MonoBehaviour {
     }
 
     virtual public void FixedUpdate() {
+        DebugPanel.U("Closest grabbable", closestGrabbable);
         if (m_operatingWithoutOVRCameraRig) {
             OnUpdatedAnchors();
         }
@@ -178,6 +179,8 @@ public class AGrabber : MonoBehaviour {
         int refCount = 0;
         m_grabCandidates.TryGetValue(grabbable, out refCount);
         m_grabCandidates[grabbable] = refCount + 1;
+
+        updateClosestGrabbable();
     }
 
     void OnTriggerExit(Collider otherCollider) {
@@ -196,6 +199,19 @@ public class AGrabber : MonoBehaviour {
         } else {
             m_grabCandidates.Remove(grabbable);
         }
+
+        updateClosestGrabbable();
+    }
+
+    private void updateClosestGrabbable() {
+        (AGrabbable closest, Collider closestGrabbableCollider) = getClosestGrabbable();
+        if (closest != closestGrabbable) {
+            Touchable oldPart = closestGrabbable != null ? closestGrabbable.GetComponent<Touchable>() : null;
+            if (oldPart) oldPart.OffTouch();
+            Touchable newPart = closest != null ? closest.GetComponent<Touchable>() : null;
+            if (newPart) newPart.OnTouch();
+            closestGrabbable = closest;
+        }
     }
 
     protected void CheckForGrabOrRelease(float prevFlex) {
@@ -206,7 +222,7 @@ public class AGrabber : MonoBehaviour {
         }
     }
 
-    protected virtual void GrabBegin() {
+    private(AGrabbable, Collider) getClosestGrabbable() {
         float closestMagSq = float.MaxValue;
         AGrabbable closestGrabbable = null;
         Collider closestGrabbableCollider = null;
@@ -231,6 +247,12 @@ public class AGrabber : MonoBehaviour {
             }
         }
 
+        return (closestGrabbable, closestGrabbableCollider);
+    }
+
+    protected virtual void GrabBegin() {
+        (AGrabbable closestGrabbable, Collider closestGrabbableCollider) = getClosestGrabbable();
+
         // Disable grab volumes to prevent overlaps
         GrabVolumeEnable(false);
 
@@ -239,32 +261,7 @@ public class AGrabber : MonoBehaviour {
                 closestGrabbable.grabbedBy.OffhandGrabbed(closestGrabbable);
             }
 
-            // Grab object if in system mode
-            SwampObject obj = closestGrabbable.transform.parent.GetComponent<SwampObject>();
-            if (obj) {
-                // Create dummy grabbable
-                GameObject dummy = Instantiate(new GameObject());
-
-                // Set up rigid body
-                Rigidbody rb = dummy.AddComponent<Rigidbody>();
-                rb.useGravity = false;
-                rb.isKinematic = true;
-
-                // Set up box collider
-                BoxCollider copy = (BoxCollider) closestGrabbableCollider;
-                BoxCollider col = dummy.AddComponent<BoxCollider>();
-                col.center = copy.center;
-                col.size = copy.size;
-                closestGrabbableCollider = col;
-
-                obj.transform.parent = dummy.transform;
-                m_grabbedObj = dummy.AddComponent<AGrabbable>();
-                isGrabbingSwampObject = true;
-            } else {
-                m_grabbedObj = closestGrabbable;
-                isGrabbingSwampObject = false;
-            }
-
+            m_grabbedObj = closestGrabbable;
             grabbedObjectParent = m_grabbedObj.transform.parent;
             m_grabbedObj.GrabBegin(this, closestGrabbableCollider);
 
@@ -346,17 +343,7 @@ public class AGrabber : MonoBehaviour {
         m_grabbedObj.GrabEnd(linearVelocity, angularVelocity);
         SetPlayerIgnoreCollision(m_grabbedObj.gameObject, false);
 
-        GridSnapper snap;
-
-        if (isGrabbingSwampObject) {
-            Transform obj = m_grabbedObj.transform.GetChild(0);
-            obj.parent = Ref.objects;
-            snap = obj.GetComponent<GridSnapper>();
-            Destroy(m_grabbedObj.gameObject);
-        } else {
-            snap = m_grabbedObj.GetComponent<GridSnapper>();
-        }
-
+        GridSnapper snap = m_grabbedObj.GetComponent<GridSnapper>();
         if (snap) {
             snap.GridSnap();
         }

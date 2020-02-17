@@ -26,7 +26,7 @@ public class DebugPanel : MonoBehaviour {
     void Update() { }
 
     public void SetVal(string key, object value) {
-        values[key] = value.ToString();
+        values[key] = value != null ? value.ToString() : "null";
 
         string updatedText = "";
         foreach (KeyValuePair<string, string> entry in values) {
