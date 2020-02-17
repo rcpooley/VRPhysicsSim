@@ -15,4 +15,11 @@ public class Util {
         return sibs;
     }
 
+    public static List<Transform> Children(Transform t) {
+        List<Transform> children = new List<Transform>();
+        for (int i = 0; i < t.childCount; i++) {
+            children.Add(t.GetChild(i));
+        }
+        return children;
+    }
 }

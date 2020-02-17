@@ -123,14 +123,23 @@ public class AGrabbable : MonoBehaviour {
 
     void Awake() {
         if (m_grabPoints.Length == 0) {
-            // Get the collider from the grabbable
-            Collider collider = this.GetComponent<Collider>();
-            if (collider == null) {
-                throw new ArgumentException("Grabbables cannot have zero grab points and no collider -- please add a grab point or collider.");
+            // Get the collider from child parts
+            if (GetComponent<SwampObject>()) {
+                m_grabPoints = new Collider[transform.childCount];
+                for (int i = 0; i < transform.childCount; i++) {
+                    m_grabPoints[i] = transform.GetChild(i).GetComponent<BoxCollider>();
+                }
+                return;
             }
 
-            // Create a default grab point
-            m_grabPoints = new Collider[1] { collider };
+            // Get the collider from the grabbable
+            Collider collider = this.GetComponent<Collider>();
+            if (collider) {
+                m_grabPoints = new Collider[1] { collider };
+                return;
+            }
+
+            throw new ArgumentException("Grabbables cannot have zero grab points and no collider -- please add a grab point or collider.");
         }
     }
 
