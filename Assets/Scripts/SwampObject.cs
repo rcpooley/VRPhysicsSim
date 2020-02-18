@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-public class SwampObject : Touchable {
+public class SwampObject : SwampTouchable {
 
     public List<SwampPart> parts {
         get {

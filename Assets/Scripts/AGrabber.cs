@@ -206,9 +206,9 @@ public class AGrabber : MonoBehaviour {
     private void updateClosestGrabbable() {
         (AGrabbable closest, Collider closestGrabbableCollider) = getClosestGrabbable();
         if (closest != closestGrabbable) {
-            Touchable oldPart = closestGrabbable != null ? closestGrabbable.GetComponent<Touchable>() : null;
+            SwampTouchable oldPart = closestGrabbable != null ? closestGrabbable.GetComponent<SwampTouchable>() : null;
             if (oldPart) oldPart.OffTouch();
-            Touchable newPart = closest != null ? closest.GetComponent<Touchable>() : null;
+            SwampTouchable newPart = closest != null ? closest.GetComponent<SwampTouchable>() : null;
             if (newPart) newPart.OnTouch();
             closestGrabbable = closest;
         }
@@ -295,7 +295,7 @@ public class AGrabber : MonoBehaviour {
             // Note: force teleport on grab, to avoid high-speed travel to dest which hits a lot of other objects at high
             // speed and sends them flying. The grabbed object may still teleport inside of other objects, but fixing that
             // is beyond the scope of this demo.
-            MoveGrabbedObject(m_lastPos, m_lastRot, true);
+            // MoveGrabbedObject(m_lastPos, m_lastRot, true);
             SetPlayerIgnoreCollision(m_grabbedObj.gameObject, true);
             if (m_parentHeldObject) {
                 m_grabbedObj.transform.parent = transform;

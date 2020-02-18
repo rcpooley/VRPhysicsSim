@@ -309,6 +309,9 @@ public static class OVRInput {
 	/// Updates the internal state of OVRInput. Must be called manually if used independently from OVRManager.
 	/// </summary>
 	public static void Update() {
+		if (debugMode) {
+			return;
+		}
 		connectedControllerTypes = Controller.None;
 		stepType = OVRPlugin.Step.Render;
 		fixedUpdateCount = 0;

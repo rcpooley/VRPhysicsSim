@@ -24,7 +24,8 @@ public class BorderRenderer : MonoBehaviour {
 
     // Start is called before the first frame update
     void Start() {
-        borders = Instantiate(new GameObject()).transform;
+        borders = new GameObject().transform;
+        borders.gameObject.name = "Borders";
         borders.parent = transform;
         borders.localPosition = Vector3.zero;
         borders.localEulerAngles = Vector3.zero;

@@ -8,14 +8,14 @@ public class DebugInput : MonoBehaviour {
     public bool _enabled;
 
     public bool leftGrab;
-    private bool lastLeftGrab;
-
     public bool rightGrab;
-    private bool lastRightGrab;
+    public bool buttonOne;
 
     private OVRInput.OVRControllerBase left;
 
     private OVRInput.OVRControllerBase right;
+
+    private OVRInput.OVRControllerBase touch;
 
     void Start() {
         Type inType = typeof(OVRInput);
@@ -26,38 +26,47 @@ public class DebugInput : MonoBehaviour {
                 left = c;
             } else if (c.controllerType == OVRInput.Controller.RTouch) {
                 right = c;
+            } else if (c.controllerType == OVRInput.Controller.Touch) {
+                touch = c;
             }
         });
     }
 
     void Update() {
         OVRInput.debugMode = _enabled;
-        lastLeftGrab = UpdateController(left, lastLeftGrab, leftGrab, false);
-        lastRightGrab = UpdateController(right, lastRightGrab, rightGrab, true);
 
-        float flex = OVRInput.Get(OVRInput.Axis1D.PrimaryHandTrigger, OVRInput.Controller.RTouch);
-        DebugPanel.U("Right flex", flex);
-    }
-
-    private bool UpdateController(OVRInput.OVRControllerBase ctrl, bool last, bool now, bool right) {
-        if (last != now) {
-            if (now) {
-                ctrl.currentState.Buttons = (uint) ctrl.ResolveToRawMask(OVRInput.Button.PrimaryHandTrigger);
-                ctrl.previousState.Buttons = 0;
-                if (right)
-                    ctrl.currentState.RHandTrigger = 1;
-                else
-                    ctrl.currentState.LHandTrigger = 1;
-            } else {
-                ctrl.currentState.Buttons = 0;
-                if (right)
-                    ctrl.currentState.RHandTrigger = 0;
-                else
-                    ctrl.currentState.LHandTrigger = 0;
-            }
-        } else {
-            ctrl.previousState = ctrl.currentState;
+        if (_enabled) {
+            Type inType = typeof(OVRInput);
+            FieldInfo activeCtrlField = inType.GetField("activeControllerType", BindingFlags.Instance | BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.Static);
+            activeCtrlField.SetValue(null, OVRInput.Controller.Touch);
         }
-        return now;
+
+        // Update previous states
+        left.previousState = left.currentState;
+        right.previousState = right.currentState;
+        touch.previousState = touch.currentState;
+
+        // Reset current state
+        left.currentState.Buttons = 0;
+        right.currentState.Buttons = 0;
+        touch.currentState.Buttons = 0;
+
+        Tuple<bool, OVRInput.OVRControllerBase, OVRInput.Button>[] toCheck = {
+            Tuple.Create(leftGrab, left, OVRInput.Button.PrimaryHandTrigger),
+            Tuple.Create(rightGrab, right, OVRInput.Button.PrimaryHandTrigger),
+            Tuple.Create(buttonOne, right, OVRInput.Button.One),
+            Tuple.Create(buttonOne, left, OVRInput.Button.One),
+            Tuple.Create(buttonOne, touch, OVRInput.Button.One)
+        };
+
+        for (int i = 0; i < toCheck.Length; i++) {
+            (bool pressed, OVRInput.OVRControllerBase ctrl, OVRInput.Button button) = toCheck[i];
+            if (pressed) {
+                ctrl.currentState.Buttons = ctrl.currentState.Buttons | (uint) ctrl.ResolveToRawMask(button);
+            }
+        }
+
+        left.currentState.LHandTrigger = leftGrab ? 1 : 0;
+        right.currentState.RHandTrigger = rightGrab ? 1 : 0;
     }
 }

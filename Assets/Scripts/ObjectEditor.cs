@@ -27,9 +27,7 @@ public class ObjectEditor : MonoBehaviour {
     void Start() {
         floorMeshRenderer = Ref.floor.GetComponent<MeshRenderer>();
         normalFloor = floorMeshRenderer.material;
-    }
 
-    void Awake() {
         setSystemMode(true);
     }
 
@@ -72,7 +70,7 @@ public class ObjectEditor : MonoBehaviour {
     private void setSystemMode(bool isSystem) {
         // If setting to system mode, make each object grabbable
         Ref.swampObjects.ForEach(obj => {
-            obj.parts.ForEach(p => p.SetEnabled(obj == m_activeObject));
+            obj.parts.ForEach(p => p.SetEnabled(isSystem || obj == m_activeObject));
             if (isSystem) {
                 obj.gameObject.AddComponent<AGrabbable>();
             } else {

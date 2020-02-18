@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-public class SwampPart : Touchable {
+public class SwampPart : SwampTouchable {
 
     private MeshRenderer m_renderer;
 

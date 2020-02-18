@@ -127,8 +127,15 @@ public class AGrabbable : MonoBehaviour {
             if (GetComponent<SwampObject>()) {
                 m_grabPoints = new Collider[transform.childCount];
                 for (int i = 0; i < transform.childCount; i++) {
-                    m_grabPoints[i] = transform.GetChild(i).GetComponent<BoxCollider>();
+                    Transform child = transform.GetChild(i);
+                    BoxCollider orig = transform.GetChild(i).GetComponent<BoxCollider>();
+                    // BoxCollider clone = transform.gameObject.AddComponent<BoxCollider>();
+                    // clone.center = child.localPosition;
+                    // clone.size = child.localScale;
+                    // m_grabPoints[i] = clone;
+                    m_grabPoints[i] = orig;
                 }
+                // m_grabPoints = new Collider[0];
                 return;
             }
 
